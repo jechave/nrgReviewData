@@ -1,0 +1,88 @@
+---
+title: "Correlations figure"
+author: "Claus Wilke"
+output: html_document
+---
+
+
+Data table, where RSA was calculated using Tien's table and WCN is the side-chain WCN that includes contacts of a side-chain with other side-chains and alpha carbons (for Glys, the side-chain is considered to be at the alpha carbon):
+
+```{r,echo=FALSE}
+library(dplyr)
+library(tidyr)
+library(readr)
+library(cowplot)
+
+# set up data table
+
+# read wcn components
+df1 <- read_csv("data/prof_out_wcn.csv")
+
+# make pdb column into factor, since read_csv doesn't by default
+df1$pdb <- factor(df1$pdb)
+
+# calculate side-chain wcn
+df1$wcn.cca <- df1$wcn.ci.cj + df1$wcn.ci.aj
+glys <- df1$aa.i == "G"
+df1[glys,"wcn.cca"] <- df1[glys,"wcn.ai.cj"] + df1[glys,"wcn.ai.aj"]
+
+# calculate additional columns and clean up
+df1 <- df1 %>% group_by(pdb) %>%
+  mutate(
+    K = r4s.jc.ej/mean(r4s.jc.ej) # normalized relative rates from rates calculated by Elisha using the JC model
+  ) %>%
+  select(pdb, site, residue=aa.i, K, RSA=rsa.tien, WCN=wcn.cca) # cleaned-up and pared-down table
+
+# show table
+head(df1)
+```
+
+# Model comparison
+
+Table with predicted-empirical correlations:
+
+```{r, echo=TRUE}
+corTable <- df1 %>% group_by(pdb) %>%
+  summarize( cor.RSA = cor(K, RSA),
+             cor.WCN = cor(K, WCN))
+head(corTable)
+```
+
+Protein-by-protein model comparison
+```{r, echo=TRUE}
+# pared-down table of select structures
+pdblist <- c("1R44", "1LVH", "1AKO", "1OGO")
+justTable <- data.frame(pdb=pdblist,
+                        vjust=c(.4, 1.1, 1.1, .5),
+                        hjust=c(-.2, 1.2, 1.2, 1.2))
+corTable2 <- filter(corTable,
+                    pdb %in% pdblist) %>% inner_join(justTable, by='pdb')
+
+p1 <- ggplot(corTable, aes(y=cor.RSA, x=-cor.WCN)) + 
+  geom_abline() +
+  geom_point(col="blue", size=2) + 
+  geom_point(data=corTable2, col='black', size=6, shape=1) +
+  geom_text(data=corTable2, aes(label=pdb, vjust=vjust, hjust=hjust), col='black') +
+  xlim(0.3, 0.78) +
+  ylim(0.3, 0.78) +
+  coord_fixed() +
+  xlab("Absolute Rate–WCN correlation") +
+  ylab("Rate–RSA correlation")
+p2 <- switch_axis_position(p1, axis='x') 
+ggdraw(p2)
+
+#corTable %>% filter(cor.RSA>-cor.WCN, cor.RSA>.5, cor.RSA<.6)
+```
+
+Write data files for select structures
+```{r, echo=TRUE}
+for(x in pdblist)
+{
+  df_structure <- df1[df1$pdb==x, ]
+  write.csv(df_structure, paste("structures/", x, ".csv", sep=''), row.names=FALSE)
+  write.table(df_structure$K, paste("structures/", x, "-rate.txt", sep=''), row.names=F, col.names=F)
+  write.table(df_structure$RSA, paste("structures/", x, "-RSA.txt", sep=''), row.names=F, col.names=F)
+  write.table(scale(-1*df_structure$WCN), paste("structures/", x, "-WCN.txt", sep=''), row.names=F, col.names=F)
+  cat("pdb:", x, "min WCN:", min(df_structure$WCN), "max WCN", max(df_structure$WCN), "\n")
+}
+```
