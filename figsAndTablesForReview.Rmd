@@ -1,0 +1,62 @@
+---
+title: "figsAndTablesForReview"
+author: "Julian Echave"
+date: "10 de septiembre de 2015"
+output: html_document
+---
+
+
+Data table, where RSA was calculated using Tien's table and WCN is the side-chain WCN that includes contacts of a side-chain with other side-chains and alpha carbons (for Glys, the side-chain is considered to be at the alpha carbon):
+
+```{r,echo=FALSE}
+library("plyr")
+library(ggplot2)
+library(reshape2)
+
+# set up data table
+
+# read wcn components
+df1 = read.csv("data/prof_out_wcn.csv")
+
+# calculate side-chain wcn
+df1$wcn.cca = df1$wcn.ci.cj + df1$wcn.ci.aj
+glys = df1$aa.i == "G"
+df1[glys,"wcn.cca"] = df1[glys,"wcn.ai.cj"] + df1[glys,"wcn.ai.aj"]
+
+# calculate normalized relative rates from rates calculated by Elisha using the JC model
+df1 = ddply(df1,"pdb",transform,K = r4s.jc.ej/mean(r4s.jc.ej))
+
+# calculate rates 
+df1 = ddply(df1,"pdb",transform,rate.rsa = fitted.values(lm(K~rsa.tien)),rate.wcn = fitted.values(lm(K~wcn.cca)))
+
+# get rid of some columns
+df1 = df1[,c("pdb","site","aa.i","K","rsa.tien","wcn.cca","rate.rsa","rate.wcn","rate.ddg.foldx")]
+names(df1) = c("pdb","site","residue","K","RSA","WCN","K.RSA","K.WCN","K.ddG")
+
+# show table
+
+head(df1)
+
+
+```
+
+# Model comparison
+
+Table with predicted-empirical correlations:
+
+```{r, echo=TRUE}
+gofTable = ddply(df1,"pdb",summarize,cor.RSA = cor(K,K.RSA),cor.WCN = cor(K,K.WCN),cor.ddG = cor(K,K.ddG))
+head(gofTable)
+```
+
+Protein-by-protein model comparison
+
+```{r, echo=TRUE}
+source("multiplot.R")
+p1 = ggplot(gofTable,aes(x=cor.RSA,y=cor.WCN)) + geom_point(col="blue",size=2) + geom_abline()
+p2 = ggplot(gofTable,aes(x=cor.ddG,y=cor.WCN)) + geom_point(col="blue",size=2) + geom_abline()
+p3 = ggplot(gofTable,aes(x=cor.RSA,y=cor.ddG)) + geom_point(col="blue",size=2) + geom_abline()
+multiplot(p1,p2,p3,cols=3)
+
+```
+
