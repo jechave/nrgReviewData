@@ -53,8 +53,8 @@ Protein-by-protein model comparison
 # pared-down table of select structures
 pdblist <- c("1R44", "1LVH", "1AKO", "1OGO")
 justTable <- data.frame(pdb=pdblist,
-                        vjust=c(.4, 1.1, 1.1, .5),
-                        hjust=c(-.2, 1.2, 1.2, 1.2))
+                        vjust=c(.4, 1.1, 1.1, 1),
+                        hjust=c(1.2, 1.2, 1.2, 1.2))
 corTable2 <- filter(corTable,
                     pdb %in% pdblist) %>% inner_join(justTable, by='pdb')
 
@@ -63,14 +63,17 @@ p1 <- ggplot(corTable, aes(y=cor.RSA, x=-cor.WCN)) +
   geom_point(col="blue", size=2) + 
   geom_point(data=corTable2, col='black', size=6, shape=1) +
   geom_text(data=corTable2, aes(label=pdb, vjust=vjust, hjust=hjust), col='black') +
-  xlim(0.3, 0.78) +
-  ylim(0.3, 0.78) +
+  scale_x_continuous(limits = c(0.25, 0.78), breaks = c(.3, .5, .7)) +
+  scale_y_continuous(limits = c(0.25, 0.78), breaks = c(.3, .5, .7)) +
   coord_fixed() +
-  xlab("Absolute Rate–WCN correlation") +
-  ylab("Rate–RSA correlation")
-p2 <- switch_axis_position(p1, axis='x') 
-ggdraw(p2)
+  xlab("Abs. Rate-WCN correlation") +
+  ylab("Abs. Rate-RSA correlation")
+#p2 <- switch_axis_position(p1, axis='x') 
+#p3 <- ggdraw(p2)
 
+save_plot("cor_fig.pdf", p1, base_height = 5)
+
+p1 
 #corTable %>% filter(cor.RSA>-cor.WCN, cor.RSA>.5, cor.RSA<.6)
 ```
 
