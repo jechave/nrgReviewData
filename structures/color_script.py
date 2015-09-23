@@ -5,11 +5,11 @@ def apply_color(pdb, data):
     print pdb, data
     cmd.load("%s.pse"%pdb)
     if data == "WCN":
-        max = -2.5
-        min = 2.5
+        max = 1
+        min = 0
     elif data == "rate":
-        max = -2.5
-        min = 2.5
+        max = 1
+        min = 0
     else:
         max = 1
         min = 0
@@ -53,12 +53,14 @@ def make_figure(pdb, data, ray, output):
 
 
 pdb_list = ['1OGO', '1AKO', '1LVH', '1R44']
-#pdb_list = ['1R44']
+#pdb_list = ['1LVH']
 
 data_list = ['WCN', 'RSA', 'rate']
-#data_list = ['rate']
+#data_list = ['WCN']
 
+ray = False
 ray = True
+output = False
 output = True
 
 for pdb in pdb_list:

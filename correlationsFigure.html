@@ -146,9 +146,9 @@ p1 </code></pre>
 {
   df_structure &lt;- df1[df1$pdb==x, ]
   write.csv(df_structure, paste(&quot;structures/&quot;, x, &quot;.csv&quot;, sep=''), row.names=FALSE)
-  write.table(scale(df_structure$K), paste(&quot;structures/&quot;, x, &quot;-rate.txt&quot;, sep=''), row.names=F, col.names=F)
-  write.table(df_structure$RSA, paste(&quot;structures/&quot;, x, &quot;-RSA.txt&quot;, sep=''), row.names=F, col.names=F)
-  write.table(scale(-1*df_structure$WCN), paste(&quot;structures/&quot;, x, &quot;-WCN.txt&quot;, sep=''), row.names=F, col.names=F)
+  write.table(rank(df_structure$K)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-rate.txt&quot;, sep=''), row.names=F, col.names=F)
+  write.table(rank(df_structure$RSA)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-RSA.txt&quot;, sep=''), row.names=F, col.names=F)
+  write.table(rank(-1*df_structure$WCN)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-WCN.txt&quot;, sep=''), row.names=F, col.names=F)
   cat(&quot;pdb:&quot;, x, &quot;min WCN:&quot;, min(df_structure$WCN), &quot;max WCN&quot;, max(df_structure$WCN), &quot;\n&quot;)
 }</code></pre>
 <pre><code>## pdb: 1R44 min WCN: 0.9086256 max WCN 2.516664 

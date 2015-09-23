@@ -83,9 +83,9 @@ for(x in pdblist)
 {
   df_structure <- df1[df1$pdb==x, ]
   write.csv(df_structure, paste("structures/", x, ".csv", sep=''), row.names=FALSE)
-  write.table(scale(df_structure$K), paste("structures/", x, "-rate.txt", sep=''), row.names=F, col.names=F)
-  write.table(df_structure$RSA, paste("structures/", x, "-RSA.txt", sep=''), row.names=F, col.names=F)
-  write.table(scale(-1*df_structure$WCN), paste("structures/", x, "-WCN.txt", sep=''), row.names=F, col.names=F)
+  write.table(rank(df_structure$K)/nrow(df_structure), paste("structures/", x, "-rate.txt", sep=''), row.names=F, col.names=F)
+  write.table(rank(df_structure$RSA)/nrow(df_structure), paste("structures/", x, "-RSA.txt", sep=''), row.names=F, col.names=F)
+  write.table(rank(-1*df_structure$WCN)/nrow(df_structure), paste("structures/", x, "-WCN.txt", sep=''), row.names=F, col.names=F)
   cat("pdb:", x, "min WCN:", min(df_structure$WCN), "max WCN", max(df_structure$WCN), "\n")
 }
 ```
