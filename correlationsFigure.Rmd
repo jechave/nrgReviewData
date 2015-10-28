@@ -85,7 +85,9 @@ for(x in pdblist)
   write.csv(df_structure, paste("structures/", x, ".csv", sep=''), row.names=FALSE)
   write.table(rank(df_structure$K)/nrow(df_structure), paste("structures/", x, "-rate.txt", sep=''), row.names=F, col.names=F)
   write.table(rank(df_structure$RSA)/nrow(df_structure), paste("structures/", x, "-RSA.txt", sep=''), row.names=F, col.names=F)
+  write.table((rank(df_structure$K)-rank(df_structure$RSA))/(nrow(df_structure)-1), paste("structures/", x, "-rate-RSA.txt", sep=''), row.names=F, col.names=F)
   write.table(rank(-1*df_structure$WCN)/nrow(df_structure), paste("structures/", x, "-WCN.txt", sep=''), row.names=F, col.names=F)
+  write.table((rank(df_structure$K)-rank(-1*df_structure$WCN))/(nrow(df_structure)-1), paste("structures/", x, "-rate-WCN.txt", sep=''), row.names=F, col.names=F)
   cat("pdb:", x, "min WCN:", min(df_structure$WCN), "max WCN", max(df_structure$WCN), "\n")
 }
 ```

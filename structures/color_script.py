@@ -1,18 +1,16 @@
 # cd /Users/wilke/Dropbox/projects/reviews_and_commentaries/AmongSiteRateVariation/figures/nrgReviewData/structures/
-
+# run color_script.py
 
 def apply_color(pdb, data):
     print pdb, data
     cmd.load("%s.pse"%pdb)
-    if data == "WCN":
-        max = 1
-        min = 0
-    elif data == "rate":
-        max = 1
-        min = 0
-    else:
-        max = 1
-        min = 0
+    max = 1
+    min = 0
+    color_scale = "rainbow"
+    if data == "rate-WCN" or data == "rate-RSA":
+        max = .9
+        min = -.9
+        color_scale = "blue_white_red"
 
     # open the file of new values (just 1 column of numbers, one for each alpha carbon)
     inFile = open("%s-%s.txt" % (pdb, data), 'r')
@@ -33,9 +31,10 @@ def apply_color(pdb, data):
     cmd.alter("%s and n. CA"%pdb, "b=stored.newB.pop(0)")
  
     # color the protein based on the new B Factors of the alpha carbons
-    cmd.spectrum("b", "rainbow", "%s and n. CA"%pdb, minimum=min, maximum=max)
+    cmd.spectrum("b", color_scale, "%s and n. CA"%pdb, minimum=min, maximum=max)
 
     cmd.cartoon("tube")
+    #cmd.cartoon("putty")
 
     # set background color
     cmd.bg_color(color="white")
@@ -53,9 +52,17 @@ def make_figure(pdb, data, ray, output):
 
 
 pdb_list = ['1OGO', '1AKO', '1LVH', '1R44']
+pdb_list = ['1OGO', '1AKO', '1R44']
+#pdb_list = ['1OGO']
 #pdb_list = ['1LVH']
+#pdb_list = ['1AKO']
+#pdb_list = ['1R44']
 
-data_list = ['WCN', 'RSA', 'rate']
+
+data_list = ['rate-WCN', 'rate-RSA']
+#data_list = ['rate-WCN']
+#data_list = ['rate-RSA']
+#data_list = ['WCN', 'RSA', 'rate']
 #data_list = ['WCN']
 
 ray = False
