@@ -146,7 +146,8 @@ p1 </code></pre>
 {
   df_structure &lt;- df1[df1$pdb==x, ]
   write.csv(df_structure, paste(&quot;structures/&quot;, x, &quot;.csv&quot;, sep=''), row.names=FALSE)
-  write.table(rank(df_structure$K)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-rate.txt&quot;, sep=''), row.names=F, col.names=F)
+  # multiply by 20 to get rates comparable to B factors, for &quot;cartoon putty&quot;
+  write.table(20*rank(df_structure$K)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-rate.txt&quot;, sep=''), row.names=F, col.names=F)
   write.table(rank(df_structure$RSA)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-RSA.txt&quot;, sep=''), row.names=F, col.names=F)
   write.table((rank(df_structure$K)-rank(df_structure$RSA))/(nrow(df_structure)-1), paste(&quot;structures/&quot;, x, &quot;-rate-RSA.txt&quot;, sep=''), row.names=F, col.names=F)
   write.table(rank(-1*df_structure$WCN)/nrow(df_structure), paste(&quot;structures/&quot;, x, &quot;-WCN.txt&quot;, sep=''), row.names=F, col.names=F)

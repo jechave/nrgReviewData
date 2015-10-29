@@ -6,7 +6,10 @@ def apply_color(pdb, data):
     cmd.load("%s.pse"%pdb)
     max = 1
     min = 0
-    color_scale = "rainbow"
+    color_scale = "blue_white_yellow"
+    if data == "rate":
+        max = 30
+        min = 10
     if data == "rate-WCN" or data == "rate-RSA":
         max = .9
         min = -.9
@@ -55,20 +58,20 @@ pdb_list = ['1OGO', '1AKO', '1LVH', '1R44']
 pdb_list = ['1OGO', '1AKO', '1R44']
 #pdb_list = ['1OGO']
 #pdb_list = ['1LVH']
-#pdb_list = ['1AKO']
+pdb_list = ['1AKO']
 #pdb_list = ['1R44']
 
 
-data_list = ['rate-WCN', 'rate-RSA']
+#data_list = ['rate-WCN', 'rate-RSA']
 #data_list = ['rate-WCN']
 #data_list = ['rate-RSA']
 #data_list = ['WCN', 'RSA', 'rate']
-#data_list = ['WCN']
+data_list = ['rate']
 
 ray = False
-ray = True
+#ray = True
 output = False
-output = True
+#output = True
 
 for pdb in pdb_list:
     for data in data_list:

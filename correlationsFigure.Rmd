@@ -83,7 +83,8 @@ for(x in pdblist)
 {
   df_structure <- df1[df1$pdb==x, ]
   write.csv(df_structure, paste("structures/", x, ".csv", sep=''), row.names=FALSE)
-  write.table(rank(df_structure$K)/nrow(df_structure), paste("structures/", x, "-rate.txt", sep=''), row.names=F, col.names=F)
+  # multiply by 20 and add 10 to get rates comparable to B factors, for "cartoon putty"
+  write.table(10+20*rank(df_structure$K)/nrow(df_structure), paste("structures/", x, "-rate.txt", sep=''), row.names=F, col.names=F)
   write.table(rank(df_structure$RSA)/nrow(df_structure), paste("structures/", x, "-RSA.txt", sep=''), row.names=F, col.names=F)
   write.table((rank(df_structure$K)-rank(df_structure$RSA))/(nrow(df_structure)-1), paste("structures/", x, "-rate-RSA.txt", sep=''), row.names=F, col.names=F)
   write.table(rank(-1*df_structure$WCN)/nrow(df_structure), paste("structures/", x, "-WCN.txt", sep=''), row.names=F, col.names=F)

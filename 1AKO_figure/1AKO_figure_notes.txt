@@ -1,0 +1,16 @@
+cd /Users/wilke/Dropbox/projects/reviews_and_commentaries/AmongSiteRateVariation/figures/nrgReviewData/1AKO_figure
+load 1AKO_main.pse
+run spectrumany.py
+spectrumany b, brown yellow white, 1AKO, minimum=10, maximum=30
+# brown: 0.65, 0.32, 0.17 (166, 82, 43)
+ray 3600, 2700
+png 1AKO_main.png
+load 1AKO_side.pse
+ray 1200, 900
+png 1AKO_side.png
+load 1AKO_front.pse
+ray 1200, 900
+png 1AKO_front.png
+load 1AKO_back.pse
+ray 1200, 900
+png 1AKO_back.png
