@@ -14,3 +14,17 @@ png 1AKO_front.png
 load 1AKO_back.pse
 ray 1200, 900
 png 1AKO_back.png
+
+
+# coloring atoms in individual residues correctly 
+load 1AKO_main.pse
+select sele, resi 45
+stored.b = 0 # create variable to store B factor in
+iterate ((sele) and n. CA), stored.b = b # get B factor for residue
+alter (sele), b=stored.b # set be factor for all atoms in residue
+select sele, resi 64
+iterate ((sele) and n. CA), stored.b = b # get B factor for residue
+alter (sele), b=stored.b # set be factor for all atoms in residue
+select sele, resi 45+64
+spectrumany b, brown yellow white, (sele), minimum=10, maximum=30
+show spheres, (sele)
